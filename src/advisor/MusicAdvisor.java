@@ -1,38 +1,95 @@
 package advisor;
 
+
 import java.util.Scanner;
+
+import static advisor.Option.*;
 
 public class MusicAdvisor {
     private boolean isRunning = true;
+    private boolean isAuthenticated = false;
 
     public void start() {
         Scanner scanner = new Scanner(System.in);
+        Option option;
+        Category category;
+
+        authenticateUser(scanner);
+
         while (isRunning) {
-            String input = scanner.nextLine();
-            switch (input) {
-                case "new":
+            String input = scanner.nextLine().trim();
+            option = parseOptionInput(input);
+
+            switch (option) {
+                case NEW:
                     printNewReleases();
                     break;
-                case "featured":
+                case FEATURED:
                     printFeatured();
                     break;
-                case "categories":
+                case CATEGORIES:
                     printCategories();
                     break;
-                case "playlists Mood":
+                case PLAYLIST:
+                    category = parseCategoryInput(input);//todo
                     printPlayListMood();
                     break;
-                case "exit":
+                case EXIT:
                     turnOffApp();
                     printGoodbye();
-                    break;
-                default:
-                    throw new IllegalArgumentException(input + " dont know");
-
+                case UNKNOWN:
+                    printIllegalArgumentMessage(input);
             }
         }
         scanner.close();
     }
+
+    private void authenticateUser(Scanner scanner) {
+        while (!isAuthenticated) {
+            String input = scanner.nextLine();
+            Option option = parseOptionInput(input);
+            if (option == EXIT) {
+                printGoodbye();
+                System.exit(0);
+            }
+            if (option != AUTH) {
+                printInfoAuthForUser();
+                continue;
+            }
+            printAuthLink();
+            isAuthenticated = true;
+        }
+        printSuccessAuthentication();
+    }
+
+    private Option parseOptionInput(String input) throws IllegalArgumentException {
+        input = input.split(" ")[0].toUpperCase();
+        try {
+            return Option.valueOf(input);
+        } catch (IllegalArgumentException ex) {
+            return UNKNOWN;
+        }
+    }
+
+    private Category parseCategoryInput(String input) {
+        input = input.split(" ")[1].toUpperCase();
+        return Category.valueOf(input);
+    }
+
+    private void printInfoAuthForUser() {
+        System.out.println("Please, provide access for application.");
+    }
+
+    private void printAuthLink() {
+        System.out.println("https://accounts.spotify.com/authorize?" +
+                "client_id=2ee3d9aa7be04620bbc2838939e84407" +
+                "&redirect_uri=http://localhost:8080&response_type=code");
+    }
+
+    private void printSuccessAuthentication() {
+        System.out.println("---SUCCESS---");
+    }
+
 
     private void printNewReleases() {
         System.out.println("---NEW RELEASES---\n" +
@@ -74,4 +131,7 @@ public class MusicAdvisor {
         System.out.println("---GOODBYE!---");
     }
 
+    private void printIllegalArgumentMessage(String input) {
+        System.out.println("Dont recognize this input : " + input);
+    }
 }
