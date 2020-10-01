@@ -1,13 +1,28 @@
 package advisor;
 
 
+import advisor.httpclient.Request;
+import advisor.model.token.AccessToken;
+import advisor.server.Server;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.util.Scanner;
 
 import static advisor.Option.*;
 
 public class MusicAdvisor {
+    private static final String AUTHORIZE_USER_LINK = "https://accounts.spotify.com/authorize?" +
+            "client_id=2ee3d9aa7be04620bbc2838939e84407" +
+            "&redirect_uri=http://localhost:8080&response_type=code";
+    private AccessToken accessToken;
+    private String code = "";
     private boolean isRunning = true;
     private boolean isAuthenticated = false;
+    private boolean isUserTryAuthenticateYourself = false;
+
+    private Request request = new Request();
 
     public void start() {
         Scanner scanner = new Scanner(System.in);
@@ -45,11 +60,15 @@ public class MusicAdvisor {
     }
 
     private void authenticateUser(Scanner scanner) {
+        Server server = new Server(this);
+        server.start();
+
         while (!isAuthenticated) {
             String input = scanner.nextLine();
             Option option = parseOptionInput(input);
             if (option == EXIT) {
                 printGoodbye();
+                server.stop();
                 System.exit(0);
             }
             if (option != AUTH) {
@@ -57,10 +76,35 @@ public class MusicAdvisor {
                 continue;
             }
             printAuthLink();
-            isAuthenticated = true;
+            printWaitingForCode();
+            this.stopThisExecutionUntilUserAuthenticate();
+            printCodeReceived();
+            if (code.length() == 0) {
+                isUserTryAuthenticateYourself = false;
+                continue;
+            }
+            try {
+                this.accessToken = getAccessToken();
+                printAccessTokenAsJson();
+                isAuthenticated = true;
+            } catch (IOException | InterruptedException ex) {
+                System.out.println("Fail to get access token form code");
+                isUserTryAuthenticateYourself = false;
+            }
         }
         printSuccessAuthentication();
+        server.stop();
     }
+
+    private AccessToken getAccessToken() throws IOException, InterruptedException {
+        printProcedureAccessToken();
+        return request.getAccessToken(code);
+    }
+
+    private void printProcedureAccessToken() {
+        System.out.println("making http request for access_token...");
+    }
+
 
     private Option parseOptionInput(String input) throws IllegalArgumentException {
         input = input.split(" ")[0].toUpperCase();
@@ -68,6 +112,16 @@ public class MusicAdvisor {
             return Option.valueOf(input);
         } catch (IllegalArgumentException ex) {
             return UNKNOWN;
+        }
+    }
+
+    private synchronized void stopThisExecutionUntilUserAuthenticate() {
+        while (!isUserTryAuthenticateYourself) {
+            try {
+                this.wait(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -81,9 +135,7 @@ public class MusicAdvisor {
     }
 
     private void printAuthLink() {
-        System.out.println("https://accounts.spotify.com/authorize?" +
-                "client_id=2ee3d9aa7be04620bbc2838939e84407" +
-                "&redirect_uri=http://localhost:8080&response_type=code");
+        System.out.println(AUTHORIZE_USER_LINK);
     }
 
     private void printSuccessAuthentication() {
@@ -131,7 +183,27 @@ public class MusicAdvisor {
         System.out.println("---GOODBYE!---");
     }
 
+    private void printWaitingForCode() {
+        System.out.println("waiting for code...");
+    }
+
+    private void printCodeReceived() {
+        System.out.println("code received");
+    }
+
     private void printIllegalArgumentMessage(String input) {
         System.out.println("Dont recognize this input : " + input);
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    private void printAccessTokenAsJson() throws JsonProcessingException {
+        System.out.println("response:" + System.lineSeparator() + new ObjectMapper().writeValueAsString(accessToken));
+    }
+
+    public void setUserTryAuthenticateYourself(boolean status) {
+        this.isUserTryAuthenticateYourself = status;
     }
 }

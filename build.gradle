@@ -13,11 +13,15 @@ repositories {
 
 dependencies {
     compile 'com.google.code.gson:gson:+'
+    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.2'
 }
 
 jar {
     manifest {
-        attributes 'Main-Class' : 'advisor.Main'
+        attributes 'Main-Class': 'advisor.Main'
     }
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
