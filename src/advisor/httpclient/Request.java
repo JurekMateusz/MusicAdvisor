@@ -1,7 +1,7 @@
 package advisor.httpclient;
 
 import advisor.model.token.AccessToken;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
@@ -17,18 +17,18 @@ public class Request {
     private static final String REDIRECT_URI = "redirect_uri=http://localhost:8080";
     private final String SPOTIFY_TOKEN_URI = "https://accounts.spotify.com/api/token";
     private final String AMP = "&";
-    private ObjectMapper mapper;
+    private Gson mapper;
     private HttpClient client;
 
     public Request() {
         this.client = HttpClient.newBuilder().build();
-        mapper = new ObjectMapper();
+        mapper = new Gson();
     }
 
     public AccessToken getAccessToken(String code) throws IOException, InterruptedException {
         String postContent = makeContent(code);
         String json = makePost(postContent);
-        return mapper.readValue(json, AccessToken.class);
+        return mapper.fromJson(json, AccessToken.class);
     }
 
     private String makeContent(String code) {

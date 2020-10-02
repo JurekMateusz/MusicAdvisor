@@ -1,32 +1,34 @@
 package advisor.server;
 
-import advisor.MusicAdvisor;
+import advisor.music.task.auth.AuthenticateUserTask;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Objects;
+import java.util.concurrent.Semaphore;
 import java.util.regex.Pattern;
 
 public class Server {
+    private static final Integer MIN_CODE_LENGTH = 160;
     private static final String SUCCESS_MESSAGE = "Got the code. Return back to your program.";
     private static final String FAIL_MESSAGE = "Not found authorization code. Try again.";
-    private final MusicAdvisor musicAdvisor;
+    private final AuthenticateUserTask musicAdvisor;
+    private final Semaphore semaphore;
     private HttpServer server;
 
-    public Server(MusicAdvisor musicAdvisor) {
+    public Server(AuthenticateUserTask musicAdvisor, Semaphore semaphore) {
         this.musicAdvisor = musicAdvisor;
+        this.semaphore = semaphore;
         try {
             this.server = HttpServer.create();
             configureServer();
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        Server server = new Server(new MusicAdvisor());
-        server.start();
+        if (!semaphore.tryAcquire(1)) {
+            throw new IllegalStateException("Semaphore not taken");
+        }
     }
 
     public void start() {
@@ -55,15 +57,18 @@ public class Server {
     }
 
     private boolean isValid(String query) {
-        return Objects.nonNull(query) && Pattern.compile("code=.*").matcher(query).find();
+        return Objects.nonNull(query)
+                && Pattern.compile("code=.*").matcher(query).find()
+                && getCodeFromQuery(query).length() >= MIN_CODE_LENGTH;
     }
 
     private void forwardAuthCode(String query) {
-        if (Objects.nonNull(query)) {
-            String code = getCodeFromQuery(query);
-            musicAdvisor.setCode(code);
+        if (!isValid(query)) {
+            return;
         }
-        musicAdvisor.setUserTryAuthenticateYourself(true);
+        String code = getCodeFromQuery(query);
+        musicAdvisor.setCode(code);
+        semaphore.release(1);
     }
 
     private String getCodeFromQuery(String query) {

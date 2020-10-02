@@ -1,6 +1,6 @@
 package advisor.model.token;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,14 +9,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AccessToken {
-    @JsonProperty("access_token")
+    @SerializedName("access_token")
     private String accessToken;
-    @JsonProperty("token_type")
+    @SerializedName("token_type")
     private String tokenType;
-    @JsonProperty("expires_in")
+    @SerializedName("expires_in")
     private long expiresIn;
-    @JsonProperty("refresh_token")
+    @SerializedName("refresh_token")
     private String refreshToken;
-    @JsonProperty("scope")
+    @SerializedName("scope")
     private String scope;
 }

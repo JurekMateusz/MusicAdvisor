@@ -1,4 +1,4 @@
-package advisor;
+package advisor.music;
 
 public enum Option {
     NEW("new"),

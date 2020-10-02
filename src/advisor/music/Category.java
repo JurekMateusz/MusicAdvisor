@@ -1,4 +1,4 @@
-package advisor;
+package advisor.music;
 
 public enum Category {
     TOP_LISTS("Top Lists"),
