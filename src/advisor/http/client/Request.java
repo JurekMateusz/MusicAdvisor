@@ -1,4 +1,4 @@
-package advisor.httpclient;
+package advisor.http.client;
 
 import advisor.model.token.AccessToken;
 import com.google.gson.Gson;
@@ -10,6 +10,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+//todo try to use decorator Gson
 public class Request {
     private static final String CLIENT_ID = "client_id=2ee3d9aa7be04620bbc2838939e84407";
     private static final String CLIENT_SECRET = "client_secret=aea346f5479d4f7f955fbe683b3a6e47";

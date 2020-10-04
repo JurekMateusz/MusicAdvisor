@@ -1,6 +1,6 @@
-package advisor.service;
+package advisor.http.service;
 
-import advisor.httpclient.Request;
+import advisor.http.client.Request;
 import advisor.model.token.AccessToken;
 
 import java.io.IOException;

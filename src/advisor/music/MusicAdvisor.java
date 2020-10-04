@@ -5,7 +5,7 @@ import advisor.model.token.AccessToken;
 import advisor.music.io.InputOutputHelper;
 import advisor.music.task.auth.AuthenticateUserTask;
 import advisor.music.task.main.MainAppTask;
-import advisor.service.RequestService;
+import advisor.http.service.RequestService;
 
 import java.io.IOException;
 import java.util.Objects;

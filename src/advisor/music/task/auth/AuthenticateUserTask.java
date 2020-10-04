@@ -3,9 +3,7 @@ package advisor.music.task.auth;
 import advisor.music.Option;
 import advisor.music.io.InputOutputHelper;
 import advisor.music.task.MusicAdvisorTask;
-import advisor.server.Server;
-
-import java.util.concurrent.Semaphore;
+import advisor.server.ServerService;
 
 import static advisor.music.Option.AUTH;
 import static advisor.music.Option.EXIT;
@@ -16,22 +14,14 @@ public class AuthenticateUserTask implements MusicAdvisorTask {
             "&redirect_uri=http://localhost:8080&response_type=code";
     private final InputOutputHelper ioHelper;
     private String code = "";
-    private Server server;
-    private Semaphore semaphore;
 
     public AuthenticateUserTask(InputOutputHelper ioHelper) {
         this.ioHelper = ioHelper;
-        semaphore = new Semaphore(1);
-        this.server = new Server(this, semaphore);
     }
 
     @Override
     public void execute() {
-        server.start();
-
         authenticateUser();
-
-        server.stop();
     }
 
     private void authenticateUser() {
@@ -40,7 +30,6 @@ public class AuthenticateUserTask implements MusicAdvisorTask {
             Option option = parseOptionInput(input);
             if (option == EXIT) {
                 ioHelper.printGoodbye();
-                server.stop();
                 System.exit(0);
             }
             if (option != AUTH) {
@@ -49,25 +38,13 @@ public class AuthenticateUserTask implements MusicAdvisorTask {
             }
             ioHelper.print(AUTHORIZE_USER_LINK);
             ioHelper.printWaitingForCode();
-            stopThisExecutionUntilUserAuthenticateYourselfInSpotify();
+            code = new ServerService().getUserSpotifyCode();
             ioHelper.printCodeReceived();
             return;
         }
     }
 
-    private void stopThisExecutionUntilUserAuthenticateYourselfInSpotify() {
-        try {
-            semaphore.acquire(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     public String getCode() {
         return this.code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 }
