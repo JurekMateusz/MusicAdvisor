@@ -1,7 +1,7 @@
 package advisor.http.client;
 
-import advisor.model.token.AccessToken;
-import com.google.gson.Gson;
+import advisor.exception.ContentNotFoundException;
+import advisor.exception.InvalidAccessTokenException;
 
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
@@ -10,39 +10,75 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-//todo try to use decorator Gson
 public class Request {
-    private static final String CLIENT_ID = "client_id=2ee3d9aa7be04620bbc2838939e84407";
-    private static final String CLIENT_SECRET = "client_secret=aea346f5479d4f7f955fbe683b3a6e47";
-    private static final String GRANT_TYPE = "grant_type=authorization_code";
-    private static final String REDIRECT_URI = "redirect_uri=http://localhost:8080";
-    private final String SPOTIFY_TOKEN_URI = "https://accounts.spotify.com/api/token";
-    private final String AMP = "&";
-    private Gson mapper;
+    private static final int HTTP_NOT_FOUND = 404;
+    private static final int HTTP_UNAUTHORIZED = 401;
+    private static final String SPOTIFY_TOKEN_URI = "https://accounts.spotify.com/api/token";
+    private static final String API = "https://api.spotify.com/v1/browse";
+    private static final String NEWS_URL = API + "/new-releases?limit=";
+    private static final String FEATURED_PLAYLIST_URL = API + "/featured-playlists?limit=";
+    private static final String CATEGORIES_URL = API + "/categories";
     private HttpClient client;
 
     public Request() {
         this.client = HttpClient.newBuilder().build();
-        mapper = new Gson();
     }
 
-    public AccessToken getAccessToken(String code) throws IOException, InterruptedException {
-        String postContent = makeContent(code);
-        String json = makePost(postContent);
-        return mapper.fromJson(json, AccessToken.class);
-    }
-
-    private String makeContent(String code) {
-        return GRANT_TYPE + AMP + "code=" + code + AMP + REDIRECT_URI + AMP + CLIENT_ID + AMP + CLIENT_SECRET;
-    }
-
-    private String makePost(String content) throws IOException, InterruptedException {
+    public String getAccessToken(String code) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .setHeader("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
                 .uri(URI.create(SPOTIFY_TOKEN_URI))
-                .POST(HttpRequest.BodyPublishers.ofString(content))
+                .POST(HttpRequest.BodyPublishers.ofString(code))
                 .build();
         HttpResponse<String> result = client.send(request, HttpResponse.BodyHandlers.ofString());
         return result.body();
+    }
+
+    public String getNew(String accessToken, int limit) throws IOException, InterruptedException, InvalidAccessTokenException {
+        String authHeader = createAuthHeader(accessToken);
+        return makeHttpGetRequestWith(authHeader, NEWS_URL + limit);
+    }
+
+    public String getFeatured(String accessToken, int limit) throws IOException, InterruptedException, InvalidAccessTokenException {
+        String authHeader = createAuthHeader(accessToken);
+        return makeHttpGetRequestWith(authHeader, FEATURED_PLAYLIST_URL + limit);
+    }
+
+    public String getTopCategories(String accessToken, int limit) throws IOException, InterruptedException, InvalidAccessTokenException {
+        String authHeader = createAuthHeader(accessToken);
+        String url = CATEGORIES_URL + "?limit=" + limit;
+        return makeHttpGetRequestWith(authHeader, url);
+    }
+
+    public String getPlaylistCategory(String accessToken, int limit, String categoryId) throws IOException, InterruptedException, InvalidAccessTokenException {
+        String authHeader = createAuthHeader(accessToken);
+        String url = createCategoryUrl(categoryId, limit);
+        return makeHttpGetRequestWith(authHeader, url);
+    }
+
+    private String makeHttpGetRequestWith(String auth, String toUrl) throws IOException, InterruptedException, InvalidAccessTokenException {
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .setHeader("Content-Type", MediaType.APPLICATION_JSON)
+                .setHeader("Authorization", auth)
+                .uri(URI.create(toUrl))
+                .GET()
+                .build();
+        HttpResponse<String> result = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        int statusCode = result.statusCode();
+        if (statusCode == HTTP_UNAUTHORIZED) {
+            throw new InvalidAccessTokenException();
+        }
+        if (statusCode == HTTP_NOT_FOUND) {
+            throw new ContentNotFoundException("Nothing found in: " + toUrl);
+        }
+        return result.body();
+    }
+
+    private String createAuthHeader(String accessToken) {
+        return "Bearer " + accessToken;
+    }
+
+    private String createCategoryUrl(String categoryId, int limit) {
+        return CATEGORIES_URL + "/" + categoryId + "/playlists?limit=" + limit;
     }
 }
