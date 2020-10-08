@@ -1,26 +1,25 @@
 package advisor.music;
 
 
-import advisor.model.token.AccessToken;
-import advisor.music.io.InputOutputHelper;
-import advisor.music.task.auth.AuthenticateUserTask;
-import advisor.music.task.main.MainAppTask;
 import advisor.http.service.RequestService;
+import advisor.model.token.AccessToken;
+import advisor.music.lifecycle.auth.AuthenticateUserLifecycle;
+import advisor.music.lifecycle.main.MainAppLifecycle;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.Objects;
 
 public class MusicAdvisor {
     private String userSpotifyCode = "";
-    private InputOutputHelper ioHelper = new InputOutputHelper();
-    private RequestService service = new RequestService();
+    private RequestService service = RequestService.getInstance();
 
     public void start() {
-        AuthenticateUserTask task = new AuthenticateUserTask(ioHelper);
+        AuthenticateUserLifecycle task = new AuthenticateUserLifecycle();
         task.execute();
         this.userSpotifyCode = task.getCode();
 
-        ioHelper.printProcedureAccessToken();
+        System.out.println("making http request for access_token...");
         AccessToken accessToken;
         try {
             accessToken = service.getFirstAccessToken(userSpotifyCode);
@@ -30,10 +29,10 @@ public class MusicAdvisor {
         if (!isAccessTokenCorrect(accessToken)) {
             throw new IllegalStateException("Fail to get access token form code.");
         }
-        ioHelper.printAccessTokenAsJson(accessToken);
-        ioHelper.printSuccessAuthentication();
+        System.out.println("response:" + System.lineSeparator() + new Gson().toJson(accessToken)
+                + System.lineSeparator() + "---SUCCESS---");
 
-        new MainAppTask(accessToken,ioHelper).execute();
+        new MainAppLifecycle(accessToken).execute();
     }
 
     private boolean isAccessTokenCorrect(AccessToken accessToken) {

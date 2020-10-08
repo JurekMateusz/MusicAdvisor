@@ -7,4 +7,9 @@ import lombok.Getter;
 public class ExternalUrls {
     @SerializedName("spotify")
     private String spotifyUrl;
+
+    @Override
+    public String toString() {
+        return spotifyUrl;
+    }
 }

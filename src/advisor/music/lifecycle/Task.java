@@ -1,6 +1,6 @@
-package advisor.music;
+package advisor.music.lifecycle;
 
-public enum Option {
+public enum Task {
     NEW("new"),
     AUTH("auth"),
     FEATURED("featured"),
@@ -10,7 +10,7 @@ public enum Option {
     UNKNOWN("unknown");
     private String name;
 
-    Option(String name) {
+    Task(String name) {
         this.name = name;
     }
 }

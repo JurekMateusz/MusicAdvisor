@@ -2,15 +2,23 @@ package advisor.http.service;
 
 import advisor.exception.InvalidAccessTokenException;
 import advisor.http.client.Request;
+import advisor.model.api.categories.Categories;
 import advisor.model.api.categories.CategoriesRoot;
+import advisor.model.api.news.Albums;
 import advisor.model.api.news.AlbumsRoot;
+import advisor.model.api.playlist.Playlist;
 import advisor.model.api.playlist.PlaylistRoot;
 import advisor.model.token.AccessToken;
 import com.google.gson.Gson;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RequestService {
+    private static final RequestService INSTANCE = new RequestService();
+
     private static final int DEFAULT_LIMIT = 7;
     private static final String CLIENT_ID = "client_id=2ee3d9aa7be04620bbc2838939e84407";
     private static final String CLIENT_SECRET = "client_secret=aea346f5479d4f7f955fbe683b3a6e47";
@@ -20,6 +28,10 @@ public class RequestService {
 
     private Request request = new Request();
     private Gson mapper = new Gson();
+
+    public static RequestService getInstance() {
+        return INSTANCE;
+    }
 
     public AccessToken getFirstAccessToken(String spotifyCode) throws IOException, InterruptedException {
         String contentToGetFirstAccessToken = makeContent(spotifyCode);
@@ -31,44 +43,43 @@ public class RequestService {
         return GRANT_TYPE + AMP + "code=" + code + AMP + REDIRECT_URI + AMP + CLIENT_ID + AMP + CLIENT_SECRET;
     }
 
-    public AlbumsRoot getNews(String accessToken) throws IOException, InterruptedException {
+    public Albums getNews(String accessToken) throws IOException, InterruptedException {
         return getNews(accessToken, DEFAULT_LIMIT);
     }
 
-    public AlbumsRoot getNews(String accessToken, int limit) throws IOException, InterruptedException {
+    public Albums getNews(String accessToken, int limit) throws IOException, InterruptedException {
         String json = request.getNew(accessToken, limit);
         AlbumsRoot albums = mapper.fromJson(json, AlbumsRoot.class);
-        return albums;
+        return albums.getAlbums();
     }
 
-    public PlaylistRoot getFeatured(String accessToken) throws IOException, InterruptedException {
+    public Playlist getFeatured(String accessToken) throws IOException, InterruptedException {
         return getFeatured(accessToken, DEFAULT_LIMIT);
     }
 
-    public PlaylistRoot getFeatured(String accessToken, int limit) throws IOException, InterruptedException {
+    public Playlist getFeatured(String accessToken, int limit) throws IOException, InterruptedException {
         String json = request.getFeatured(accessToken, limit);
         PlaylistRoot playlistRoot = mapper.fromJson(json, PlaylistRoot.class);
-        return playlistRoot;
+        return playlistRoot.getPlaylists();
     }
 
-    public CategoriesRoot getTopCategories(String accessToken) throws IOException, InterruptedException {
+    public Categories getTopCategories(String accessToken) throws IOException, InterruptedException {
         return getTopCategories(accessToken, DEFAULT_LIMIT);
     }
-
-    public CategoriesRoot getTopCategories(String accessToken, int limit) throws IOException, InterruptedException {
+    public Categories getTopCategories(String accessToken, int limit) throws IOException, InterruptedException {
         String json = request.getTopCategories(accessToken, limit);
         CategoriesRoot categoriesRoot = mapper.fromJson(json, CategoriesRoot.class);
-        return categoriesRoot;
+        return categoriesRoot.getCategories();
     }
 
-    public PlaylistRoot getPlaylistCategory(String accessToken, String categoryId) throws IOException, InterruptedException {
+    public Playlist getPlaylistCategory(String accessToken, String categoryId) throws IOException, InterruptedException {
         return getPlaylistCategory(accessToken, DEFAULT_LIMIT, categoryId);
     }
 
-    public PlaylistRoot getPlaylistCategory(String accessToken, int limit, String categoryId) throws IOException, InterruptedException {
+    public Playlist getPlaylistCategory(String accessToken, int limit, String categoryId) throws IOException, InterruptedException {
         String json = request.getPlaylistCategory(accessToken, limit, categoryId);
         PlaylistRoot playlist = mapper.fromJson(json, PlaylistRoot.class);
-        return playlist;
+        return playlist.getPlaylists();
     }
 
 
