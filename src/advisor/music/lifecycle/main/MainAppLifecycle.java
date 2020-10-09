@@ -1,10 +1,11 @@
 package advisor.music.lifecycle.main;
 
+import advisor.exception.ContentNotFoundException;
 import advisor.exception.InvalidAccessTokenException;
 import advisor.model.token.AccessToken;
+import advisor.music.lifecycle.MusicAdvisorLifecycle;
 import advisor.music.lifecycle.Task;
 import advisor.music.lifecycle.UserInput;
-import advisor.music.lifecycle.MusicAdvisorLifecycle;
 import advisor.music.lifecycle.main.task.InputTaskAbstract;
 import advisor.music.lifecycle.main.task.TaskPerformerFactory;
 
@@ -36,7 +37,7 @@ public class MainAppLifecycle implements MusicAdvisorLifecycle {
             } catch (InterruptedException | IOException e) {
                 System.out.println("Connection error");
                 e.printStackTrace();
-            } catch (InvalidAccessTokenException ex) {
+            } catch (InvalidAccessTokenException | ContentNotFoundException ex) {
                 System.out.println(ex.getMessage());
             }
         }

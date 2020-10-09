@@ -1,6 +1,7 @@
 package advisor.music;
 
 
+import advisor.exception.InvalidAccessTokenException;
 import advisor.http.service.RequestService;
 import advisor.model.token.AccessToken;
 import advisor.music.lifecycle.auth.AuthenticateUserLifecycle;
@@ -25,12 +26,14 @@ public class MusicAdvisor {
             accessToken = service.getFirstAccessToken(userSpotifyCode);
         } catch (IOException | InterruptedException ex) {
             throw new IllegalStateException("Connection error: " + ex.getMessage());
+        } catch (InvalidAccessTokenException ex) {
+            throw new IllegalArgumentException(ex.getMessage());
         }
-        if (!isAccessTokenCorrect(accessToken)) {
-            throw new IllegalStateException("Fail to get access token form code.");
-        }
-        System.out.println("response:" + System.lineSeparator() + new Gson().toJson(accessToken)
-                + System.lineSeparator() + "---SUCCESS---");
+//        if (!isAccessTokenCorrect(accessToken)) {
+//            throw new IllegalStateException("Fail to get access token form code.");
+//        }
+//        System.out.println("response:" + System.lineSeparator() + new Gson().toJson(accessToken)
+//                + System.lineSeparator() + "---SUCCESS---");
 
         new MainAppLifecycle(accessToken).execute();
     }

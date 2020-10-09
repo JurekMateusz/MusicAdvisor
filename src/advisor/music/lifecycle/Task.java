@@ -5,7 +5,7 @@ public enum Task {
     AUTH("auth"),
     FEATURED("featured"),
     CATEGORIES("categories"),
-    PLAYLIST("playlists"),
+    PLAYLISTS("playlists"),
     EXIT("exit"),
     UNKNOWN("unknown");
     private String name;

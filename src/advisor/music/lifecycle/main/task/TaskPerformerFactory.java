@@ -15,7 +15,7 @@ public class TaskPerformerFactory {
         map.put(Task.NEW, new NewsTask());
         map.put(Task.CATEGORIES, new CategoriesTask());
         map.put(Task.FEATURED, new FeaturedTask());
-        map.put(Task.PLAYLIST, new PlaylistTask());
+        map.put(Task.PLAYLISTS, new PlaylistTask());
         map.put(Task.AUTH, new AuthTask());
         map.put(Task.UNKNOWN, new UnknownTask());
     }

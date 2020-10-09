@@ -1,6 +1,7 @@
 package advisor.http.service;
 
 import advisor.exception.InvalidAccessTokenException;
+import advisor.exception.InvalidSpotifyCodeException;
 import advisor.http.client.Request;
 import advisor.model.api.categories.Categories;
 import advisor.model.api.categories.CategoriesRoot;
@@ -10,15 +11,13 @@ import advisor.model.api.playlist.Playlist;
 import advisor.model.api.playlist.PlaylistRoot;
 import advisor.model.token.AccessToken;
 import com.google.gson.Gson;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 import java.io.IOException;
+import java.util.Optional;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+//todo
 public class RequestService {
     private static final RequestService INSTANCE = new RequestService();
-
     private static final int DEFAULT_LIMIT = 7;
     private static final String CLIENT_ID = "client_id=2ee3d9aa7be04620bbc2838939e84407";
     private static final String CLIENT_SECRET = "client_secret=aea346f5479d4f7f955fbe683b3a6e47";
@@ -26,16 +25,16 @@ public class RequestService {
     private static final String REDIRECT_URI = "redirect_uri=http://localhost:8080";
     private final String AMP = "&";
 
-    private Request request = new Request();
+    private Request request = Request.getInstance();
     private Gson mapper = new Gson();
 
     public static RequestService getInstance() {
         return INSTANCE;
     }
 
-    public AccessToken getFirstAccessToken(String spotifyCode) throws IOException, InterruptedException {
+    public AccessToken getFirstAccessToken(String spotifyCode) throws IOException, InterruptedException, InvalidSpotifyCodeException {
         String contentToGetFirstAccessToken = makeContent(spotifyCode);
-        String json = request.getAccessToken(contentToGetFirstAccessToken);
+        String json = request.getFirstAccessToken(contentToGetFirstAccessToken);
         return mapper.fromJson(json, AccessToken.class);
     }
 
@@ -66,6 +65,7 @@ public class RequestService {
     public Categories getTopCategories(String accessToken) throws IOException, InterruptedException {
         return getTopCategories(accessToken, DEFAULT_LIMIT);
     }
+
     public Categories getTopCategories(String accessToken, int limit) throws IOException, InterruptedException {
         String json = request.getTopCategories(accessToken, limit);
         CategoriesRoot categoriesRoot = mapper.fromJson(json, CategoriesRoot.class);

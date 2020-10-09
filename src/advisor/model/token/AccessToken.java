@@ -1,13 +1,8 @@
 package advisor.model.token;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
+
 public class AccessToken {
     @SerializedName("access_token")
     private String accessToken;
@@ -19,4 +14,24 @@ public class AccessToken {
     private String refreshToken;
     @SerializedName("scope")
     private String scope;
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    public long getExpiresIn() {
+        return expiresIn;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public String getScope() {
+        return scope;
+    }
 }

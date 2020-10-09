@@ -7,14 +7,6 @@ import static advisor.music.lifecycle.Task.UNKNOWN;
 public interface MusicAdvisorLifecycle {
     Scanner scanner = new Scanner(System.in);
 
-    private String getCategory(String[] splittedImput) {
-        try {
-            return splittedImput[1];
-        } catch (ArrayIndexOutOfBoundsException ex) {
-            return "unknown";
-        }
-    }
-
     default UserInput getUserInput() {
         String rawInput = scanner.nextLine();
         rawInput = rawInput.trim().toUpperCase();
@@ -34,6 +26,19 @@ public interface MusicAdvisorLifecycle {
         } catch (IllegalArgumentException ex) {
             return UNKNOWN;
         }
+    }
+
+    private String getCategory(String[] splittedImput) {
+        String result = "";
+        try {
+            result = splittedImput[1];
+            for (int i = 2; i < splittedImput.length; i++) {
+                result += " " + splittedImput[i];
+            }
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            return "unknown";
+        }
+        return result;
     }
 
     void execute();

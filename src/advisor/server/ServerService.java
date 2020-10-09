@@ -9,7 +9,7 @@ import java.util.concurrent.Semaphore;
 import java.util.regex.Pattern;
 
 public class ServerService {
-    private static final Integer MIN_CODE_LENGTH_VALID = 160;
+    private static final Integer MIN_CODE_LENGTH_VALID = 5; //160
     private Semaphore semaphore;
     private Server server;
 
@@ -37,7 +37,7 @@ public class ServerService {
 
     private class Server {
         static final String SUCCESS_MESSAGE = "Got the code. Return back to your program.";
-        static final String FAIL_MESSAGE = "Not found authorization code. Try again.";
+        static final String FAIL_MESSAGE = "Authorization code not found. Try again.";
         HttpServer server;
         String code;
 
