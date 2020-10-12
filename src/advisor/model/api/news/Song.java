@@ -25,11 +25,5 @@ public class Song {
         return name;
     }
 
-    @Override
-    public String toString() {
-        return name + System.lineSeparator()
-                + Arrays.toString(artists.toArray())
-                + System.lineSeparator() + externalUrls.toString() + System.lineSeparator();
-    }
 }
 

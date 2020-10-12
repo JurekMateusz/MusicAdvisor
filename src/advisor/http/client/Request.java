@@ -14,7 +14,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-// todo thread safety
+// todo thread safety ,templeMethod
 public class Request {
     private static final int HTTP_NOT_FOUND = 404;
     private static final int HTTP_UNAUTHORIZED = 401;
@@ -26,8 +26,6 @@ public class Request {
     private static String CATEGORIES_URL = API + "/categories";
     private static Request INSTANCE;
     private HttpClient client;
-    private ServerDetails details;
-
 
     private Request() {
         this.client = HttpClient.newBuilder().build();
@@ -59,10 +57,20 @@ public class Request {
         return makeHttpGetRequestWith(authHeader, NEWS_URL);
     }
 
+    public String getNew(String accessToken, String url) throws IOException, InterruptedException, InvalidAccessTokenException {
+        String authHeader = createAuthHeader(accessToken);
+        return makeHttpGetRequestWith(authHeader, url);
+    }
+
     public String getFeatured(String accessToken, int limit) throws IOException, InterruptedException, InvalidAccessTokenException {
         String authHeader = createAuthHeader(accessToken);
 //        return makeHttpGetRequestWith(authHeader, FEATURED_PLAYLIST_URL + limit);
         return makeHttpGetRequestWith(authHeader, FEATURED_PLAYLIST_URL);
+    }
+
+    public String getFeatured(String accessToken, String url) throws IOException, InterruptedException, InvalidAccessTokenException {
+        String authHeader = createAuthHeader(accessToken);
+        return makeHttpGetRequestWith(authHeader, url);
     }
 
     public String getTopCategories(String accessToken, int limit) throws IOException, InterruptedException, InvalidAccessTokenException {
@@ -72,10 +80,20 @@ public class Request {
         return makeHttpGetRequestWith(authHeader, url);
     }
 
+    public String getTopCategories(String accessToken, String url) throws IOException, InterruptedException, InvalidAccessTokenException {
+        String authHeader = createAuthHeader(accessToken);
+        return makeHttpGetRequestWith(authHeader, url);
+    }
+
     public String getPlaylistCategory(String accessToken, int limit, String categoryId) throws IOException, InterruptedException, InvalidAccessTokenException {
         String authHeader = createAuthHeader(accessToken);
 //        String url = createCategoryUrl(categoryId, limit);
         String url = CATEGORIES_URL + "/" + categoryId + "/playlists";
+        return makeHttpGetRequestWith(authHeader, url);
+    }
+
+    public String getPlaylistCategory(String accessToken, String url, String categoryId) throws IOException, InterruptedException, InvalidAccessTokenException {
+        String authHeader = createAuthHeader(accessToken);
         return makeHttpGetRequestWith(authHeader, url);
     }
 
@@ -115,14 +133,15 @@ public class Request {
     }
 
     public void init(ServerDetails details) {
-        this.details = details;
         this.SPOTIFY_TOKEN_URI = details.getServerAccessPath() + "/api/token";
         this.API = details.getServerApiPath() + "/v1/browse";
+
 //        this.NEWS_URL = API + "/new-releases?limit=";
 //        this.FEATURED_PLAYLIST_URL = API + "/featured-playlists?limit=";
 //        this.CATEGORIES_URL = API + "/categories";
-        this.NEWS_URL = API + "/new-releases";
-        this.FEATURED_PLAYLIST_URL = API + "/featured-playlists";
+        String limit = "limit=" + details.getNumberOfEntriesInPage();
+        this.NEWS_URL = API + "/new-releases?" + limit;
+        this.FEATURED_PLAYLIST_URL = API + "/featured-playlists?" + limit;
         this.CATEGORIES_URL = API + "/categories";
     }
 }

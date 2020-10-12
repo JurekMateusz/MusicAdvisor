@@ -13,7 +13,6 @@ import advisor.model.token.AccessToken;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.Optional;
 
 //todo
 public class RequestService {
@@ -52,12 +51,23 @@ public class RequestService {
         return albums.getAlbums();
     }
 
+    public Albums getNewsByUrl(String accessToken, String url) throws IOException, InterruptedException {
+        String json = request.getNew(accessToken, url);
+        AlbumsRoot albums = mapper.fromJson(json, AlbumsRoot.class);
+        return albums.getAlbums();
+    }
+
     public Playlist getFeatured(String accessToken) throws IOException, InterruptedException {
         return getFeatured(accessToken, DEFAULT_LIMIT);
     }
 
     public Playlist getFeatured(String accessToken, int limit) throws IOException, InterruptedException {
         String json = request.getFeatured(accessToken, limit);
+        PlaylistRoot playlistRoot = mapper.fromJson(json, PlaylistRoot.class);
+        return playlistRoot.getPlaylists();
+    }
+    public Playlist getPlaylistsByUrl(String accessToken,String url) throws IOException, InterruptedException {
+        String json = request.getFeatured(accessToken, url);
         PlaylistRoot playlistRoot = mapper.fromJson(json, PlaylistRoot.class);
         return playlistRoot.getPlaylists();
     }
@@ -68,6 +78,11 @@ public class RequestService {
 
     public Categories getTopCategories(String accessToken, int limit) throws IOException, InterruptedException {
         String json = request.getTopCategories(accessToken, limit);
+        CategoriesRoot categoriesRoot = mapper.fromJson(json, CategoriesRoot.class);
+        return categoriesRoot.getCategories();
+    }
+    public Categories getTopCategoriesByUrl(String accessToken, String url) throws IOException, InterruptedException {
+        String json = request.getTopCategories(accessToken, url);
         CategoriesRoot categoriesRoot = mapper.fromJson(json, CategoriesRoot.class);
         return categoriesRoot.getCategories();
     }
@@ -82,7 +97,6 @@ public class RequestService {
         return playlist.getPlaylists();
     }
 
-
     public boolean isAccessTokenWork(AccessToken accessToken) {
         try {
             request.getNew(accessToken.getAccessToken(), DEFAULT_LIMIT);
@@ -93,4 +107,6 @@ public class RequestService {
         }
         return true;
     }
+
+
 }

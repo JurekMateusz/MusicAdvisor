@@ -9,8 +9,8 @@ public interface MusicAdvisorLifecycle {
 
     default UserInput getUserInput() {
         String rawInput = scanner.nextLine();
-        rawInput = rawInput.trim().toUpperCase();
-        String[] split = rawInput.split(" +");
+        String input = rawInput.trim().toUpperCase();
+        String[] split = input.split(" +");
         if (split.length == 0) {
             return UserInput.of(UNKNOWN, "unknown");
         }
@@ -24,7 +24,7 @@ public interface MusicAdvisorLifecycle {
         try {
             return Task.valueOf(input);
         } catch (IllegalArgumentException ex) {
-            return UNKNOWN;
+            return UNKNOWN.set(input);
         }
     }
 

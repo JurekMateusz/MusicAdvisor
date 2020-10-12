@@ -8,13 +8,7 @@ public class Song {
     private String description;
     private String name;
     @SerializedName("external_urls")
-    private ExternalUrls url;
-
-    @Override
-    public String toString() {
-        return name + System.lineSeparator()
-                + url.toString() + System.lineSeparator();
-    }
+    private ExternalUrls externalUrls;
 
     public String getDescription() {
         return description;
@@ -24,7 +18,7 @@ public class Song {
         return name;
     }
 
-    public ExternalUrls getUrl() {
-        return url;
+    public ExternalUrls getExternalUrls() {
+        return externalUrls;
     }
 }

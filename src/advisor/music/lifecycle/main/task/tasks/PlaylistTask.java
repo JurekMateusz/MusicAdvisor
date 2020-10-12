@@ -3,6 +3,8 @@ package advisor.music.lifecycle.main.task.tasks;
 import advisor.model.api.categories.Categories;
 import advisor.model.api.categories.Category;
 import advisor.model.api.playlist.Playlist;
+import advisor.model.view.Result;
+import advisor.music.lifecycle.Task;
 import advisor.music.lifecycle.UserInput;
 import advisor.music.lifecycle.main.task.InputTaskAbstract;
 
@@ -11,7 +13,8 @@ import java.util.Optional;
 
 public class PlaylistTask extends InputTaskAbstract {
     @Override
-    public void perform(String accessToken, UserInput input) throws IOException, InterruptedException {
+    public Result perform(String accessToken, UserInput input) throws IOException, InterruptedException {
+        previousTask = Task.PLAYLISTS;
         if (categories.isEmpty()) {
             updateCategories(accessToken);
         }
@@ -20,12 +23,15 @@ public class PlaylistTask extends InputTaskAbstract {
         try {
             category = getCategoryId(input.getCategory());
         } catch (IllegalArgumentException ex) {
-            System.out.println("Unknown category name.");
-            return;
+            return Result.of("Unknown category name.");
         }
 
-        Playlist playlist = service.getPlaylistCategory(accessToken, category.getId());//todo
-        playlist.getSongs().forEach(System.out::println);
+        Playlist playlist = service.getPlaylistCategory(accessToken, category.getId());
+        lastPage = 0;
+        InputTaskAbstract.playlistsByUrl = playlist;
+        updateOffsetInfo(playlist);
+
+        return createResultOf(playlist);
     }
 
     private void updateCategories(String accessToken) throws IOException, InterruptedException {

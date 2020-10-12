@@ -32,9 +32,7 @@ public class MusicAdvisor {
 //        if (!isAccessTokenCorrect(accessToken)) {
 //            throw new IllegalStateException("Fail to get access token form code.");
 //        }
-//        System.out.println("response:" + System.lineSeparator() + new Gson().toJson(accessToken)
-//                + System.lineSeparator() + "---SUCCESS---");
-
+        System.out.println("Success!");
         new MainAppLifecycle(accessToken).execute();
     }
 

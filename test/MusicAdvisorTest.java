@@ -634,7 +634,6 @@ public class MusicAdvisorTest extends StageTest<String> {
                 "Festa Indie\n" +
                         "http://open.spotify.com/user/spotifybrazilian/playlist/4HZh0C9y80GzHDbHZyX770"
                                 .replaceAll(spotifyServerUrl, resourceServerUrl);
-
         userProgram.execute("playlists Party Time");
         String output = userProgram.getOutput();
         if (countAppearances(output, playlist1) != 1
@@ -668,5 +667,4 @@ public class MusicAdvisorTest extends StageTest<String> {
         tokenServer.stopMock();
         resourceServer.stopMock();
     }
-
 }

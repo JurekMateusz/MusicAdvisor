@@ -3,6 +3,7 @@ package advisor.music.lifecycle.main;
 import advisor.exception.ContentNotFoundException;
 import advisor.exception.InvalidAccessTokenException;
 import advisor.model.token.AccessToken;
+import advisor.model.view.Result;
 import advisor.music.lifecycle.MusicAdvisorLifecycle;
 import advisor.music.lifecycle.Task;
 import advisor.music.lifecycle.UserInput;
@@ -22,6 +23,7 @@ public class MainAppLifecycle implements MusicAdvisorLifecycle {
 
     @Override
     public void execute() {
+        Result result = Result.empty();
         while (isRunning) {
             UserInput userInput = getUserInput();
 
@@ -33,13 +35,14 @@ public class MainAppLifecycle implements MusicAdvisorLifecycle {
             String accessToken = this.accessToken.getAccessToken();
             InputTaskAbstract performer = TaskPerformerFactory.get(userInput.getTask());
             try {
-                performer.perform(accessToken, userInput);
+                result = performer.perform(accessToken, userInput);
             } catch (InterruptedException | IOException e) {
                 System.out.println("Connection error");
                 e.printStackTrace();
             } catch (InvalidAccessTokenException | ContentNotFoundException ex) {
                 System.out.println(ex.getMessage());
             }
+            System.out.println(result.getOutput());
         }
     }
 
