@@ -11,14 +11,13 @@ import java.util.Objects;
 public class NextTask extends InputTaskAbstract {
     @Override
     public Result perform(String accessToken, UserInput input) throws IOException, InterruptedException, ContentNotFoundException, InterruptedException {
-//        if (Objects.isNull(offsetInfo)) {
-//            return Result.of("You don't made any action previously");
-//        }
-//        if (Objects.isNull(offsetInfo.getNext())) {
-//            return Result.of("No more pages.");
-//        }
+        if (Objects.isNull(offsetInfo)) {
+            return Result.of("You don't made any action previously");
+        }
+        if (Objects.isNull(offsetInfo.getNext())) {
+            return Result.of("No more pages.");
+        }
         String url = offsetInfo.getNext();
-        lastPage += 1;
         return takePageFromUrl(accessToken, url);
     }
 }

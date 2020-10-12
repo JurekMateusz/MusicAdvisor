@@ -29,9 +29,9 @@ public class MusicAdvisor {
         } catch (InvalidAccessTokenException ex) {
             throw new IllegalArgumentException(ex.getMessage());
         }
-//        if (!isAccessTokenCorrect(accessToken)) {
-//            throw new IllegalStateException("Fail to get access token form code.");
-//        }
+        if (!isAccessTokenCorrect(accessToken)) {
+            throw new IllegalStateException("Fail to get access token form code.");
+        }
         System.out.println("Success!");
         new MainAppLifecycle(accessToken).execute();
     }

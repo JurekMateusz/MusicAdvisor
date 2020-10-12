@@ -27,8 +27,6 @@ public class PlaylistTask extends InputTaskAbstract {
         }
 
         Playlist playlist = service.getPlaylistCategory(accessToken, category.getId());
-        lastPage = 0;
-        InputTaskAbstract.playlistsByUrl = playlist;
         updateOffsetInfo(playlist);
 
         return createResultOf(playlist);

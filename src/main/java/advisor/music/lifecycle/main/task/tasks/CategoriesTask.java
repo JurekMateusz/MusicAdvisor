@@ -13,8 +13,6 @@ public class CategoriesTask extends InputTaskAbstract {
     public Result perform(String accessToken, UserInput input) throws IOException, InterruptedException {
         previousTask = Task.CATEGORIES;
         Categories categories = service.getTopCategories(accessToken);
-        lastPage = 0;
-        InputTaskAbstract.topCategoriesByUrl = categories;//todo
         InputTaskAbstract.categories = categories.getCategories();
         updateOffsetInfo(categories);
         return createResultOf(categories);

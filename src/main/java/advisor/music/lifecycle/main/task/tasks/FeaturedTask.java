@@ -13,8 +13,6 @@ public class FeaturedTask extends InputTaskAbstract {
     public Result perform(String accessToken, UserInput input) throws IOException, InterruptedException {
         previousTask = Task.FEATURED;
         Playlist playlist = service.getFeatured(accessToken);
-        lastPage = 0;
-        InputTaskAbstract.playlistsByUrl = playlist;
         updateOffsetInfo(playlist);
         return createResultOf(playlist);
     }
