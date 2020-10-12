@@ -12,12 +12,13 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.code.gson:gson:+'
-    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
-    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
-    compile 'com.google.code.gson:gson:+'
+    dependencies {
+        compile 'com.google.code.gson:gson:+'
+        compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
+        compile group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
+        compile 'com.google.code.gson:gson:+'
+    }
 }
-
 jar {
     manifest {
         attributes 'Main-Class': 'advisor.Main'
