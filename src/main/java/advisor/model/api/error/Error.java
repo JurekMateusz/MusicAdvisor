@@ -1,14 +1,14 @@
 package advisor.model.api.error;
 
 public class Error {
-    private int statusCode;
-    private String message;
+  private int statusCode;
+  private String message;
 
-    public int getStatusCode() {
-        return statusCode;
-    }
+  public int getStatusCode() {
+    return statusCode;
+  }
 
-    public String getMessage() {
-        return message;
-    }
+  public String getMessage() {
+    return message;
+  }
 }

@@ -9,11 +9,12 @@ import advisor.music.lifecycle.main.task.InputTaskAbstract;
 import java.io.IOException;
 
 public class FeaturedTask extends InputTaskAbstract {
-    @Override
-    public Result perform(String accessToken, UserInput input) throws IOException, InterruptedException {
-        previousTask = Task.FEATURED;
-        Playlist playlist = service.getFeatured(accessToken);
-        updateOffsetInfo(playlist);
-        return createResultOf(playlist);
-    }
+  @Override
+  public Result perform(String accessToken, UserInput input)
+      throws IOException, InterruptedException {
+    previousTask = Task.FEATURED;
+    Playlist playlist = service.getFeatured(accessToken);
+    updateOffsetInfo(playlist);
+    return createResultOf(playlist);
+  }
 }

@@ -4,37 +4,37 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-
 public class Playlist {
-    @SerializedName("items")
-    private List<Song> songs;
-    private String next;
-    private int offset;
-    private String previous;
-    private int total;
-    private int limit;
+  @SerializedName("items")
+  private List<Song> songs;
 
-    public int getLimit() {
-        return limit;
-    }
+  private String next;
+  private int offset;
+  private String previous;
+  private int total;
+  private int limit;
 
-    public int getTotal() {
-        return total;
-    }
+  public int getLimit() {
+    return limit;
+  }
 
-    public List<Song> getSongs() {
-        return songs;
-    }
+  public int getTotal() {
+    return total;
+  }
 
-    public String getNext() {
-        return next;
-    }
+  public List<Song> getSongs() {
+    return songs;
+  }
 
-    public int getOffset() {
-        return offset;
-    }
+  public String getNext() {
+    return next;
+  }
 
-    public String getPrevious() {
-        return previous;
-    }
+  public int getOffset() {
+    return offset;
+  }
+
+  public String getPrevious() {
+    return previous;
+  }
 }

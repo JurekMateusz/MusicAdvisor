@@ -9,12 +9,13 @@ import advisor.music.lifecycle.main.task.InputTaskAbstract;
 import java.io.IOException;
 
 public class CategoriesTask extends InputTaskAbstract {
-    @Override
-    public Result perform(String accessToken, UserInput input) throws IOException, InterruptedException {
-        previousTask = Task.CATEGORIES;
-        Categories categories = service.getTopCategories(accessToken);
-        InputTaskAbstract.categories = categories.getCategories();
-        updateOffsetInfo(categories);
-        return createResultOf(categories);
-    }
+  @Override
+  public Result perform(String accessToken, UserInput input)
+      throws IOException, InterruptedException {
+    previousTask = Task.CATEGORIES;
+    Categories categories = service.getTopCategories(accessToken);
+    InputTaskAbstract.categories = categories.getCategories();
+    updateOffsetInfo(categories);
+    return createResultOf(categories);
+  }
 }

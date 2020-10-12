@@ -116,5 +116,5 @@ public abstract class InputTaskAbstract {
   }
 
   public abstract Result perform(String accessToken, UserInput input)
-      throws IOException, InterruptedException, ContentNotFoundException, InterruptedException;
+      throws IOException, ContentNotFoundException, InterruptedException;
 }

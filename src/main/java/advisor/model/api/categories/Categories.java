@@ -5,36 +5,36 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class Categories {
-    @SerializedName("items")
-    private List<Category> categories;
-    private String next;
-    private int offset;
-    private String previous;
-    private int total;
-    private int limit;
+  @SerializedName("items")
+  private List<Category> categories;
 
-    public int getLimit() {
-        return limit;
-    }
+  private String next;
+  private int offset;
+  private String previous;
+  private int total;
+  private int limit;
 
-    public List<Category> getCategories() {
-        return categories;
-    }
+  public int getLimit() {
+    return limit;
+  }
 
-    public String getNext() {
-        return next;
-    }
+  public List<Category> getCategories() {
+    return categories;
+  }
 
-    public int getOffset() {
-        return offset;
-    }
+  public String getNext() {
+    return next;
+  }
 
-    public String getPrevious() {
-        return previous;
-    }
+  public int getOffset() {
+    return offset;
+  }
 
-    public int getTotal() {
-        return total;
-    }
+  public String getPrevious() {
+    return previous;
+  }
+
+  public int getTotal() {
+    return total;
+  }
 }
-

@@ -5,40 +5,42 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class Albums {
-    private String href;
-    @SerializedName("items")
-    private List<Song> songs;
-    private String next;
-    private int offset;
-    private String previous;
-    private int total;
-    private int limit;
+  private String href;
 
-    public int getLimit() {
-        return limit;
-    }
+  @SerializedName("items")
+  private List<Song> songs;
 
-    public int getTotal() {
-        return total;
-    }
+  private String next;
+  private int offset;
+  private String previous;
+  private int total;
+  private int limit;
 
-    public String getHref() {
-        return href;
-    }
+  public int getLimit() {
+    return limit;
+  }
 
-    public List<Song> getSongs() {
-        return songs;
-    }
+  public int getTotal() {
+    return total;
+  }
 
-    public String getNext() {
-        return next;
-    }
+  public String getHref() {
+    return href;
+  }
 
-    public int getOffset() {
-        return offset;
-    }
+  public List<Song> getSongs() {
+    return songs;
+  }
 
-    public String getPrevious() {
-        return previous;
-    }
+  public String getNext() {
+    return next;
+  }
+
+  public int getOffset() {
+    return offset;
+  }
+
+  public String getPrevious() {
+    return previous;
+  }
 }
