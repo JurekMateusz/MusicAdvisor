@@ -12,6 +12,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.junit.jupiter:junit-jupiter:5.6.2'
     dependencies {
         compile 'com.google.code.gson:gson:+'
         compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'

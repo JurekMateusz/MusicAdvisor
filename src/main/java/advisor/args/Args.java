@@ -1,127 +1,92 @@
 package advisor.args;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Args {
-  private static final String[] ARGS;
-
-  private static final String DEFAULT_AUTHORIZATION_SERVER_PATH = "https://accounts.spotify.com";
-  private static final String DEFAULT_API_SERVER_PATH = "https://api.spotify.com";
-  private static final int DEFAULT_NUMBER_OF_ENTRIES_ON_PAGE = 5;
-  private static final String ARG_NAME_AUTHORIZATION_SERVER = "-access";
-  private static final String ARG_NAME_API_SEVER = "-resource";
-  private static final String ARG_NAME_PAGE = "-page";
-  private static final String ARG_CLIENT_ID = "-client_id";
-  private static final String ARG_CLIENT_SECRET = "-client_secret";
-
-  static {
-    ARGS =
-        new String[] {
-          ARG_NAME_AUTHORIZATION_SERVER,
-          ARG_NAME_API_SEVER,
-          ARG_NAME_PAGE,
-          ARG_CLIENT_ID,
-          ARG_CLIENT_SECRET
-        };
-  }
-
+  static final String DEFAULT_AUTHORIZATION_SERVER_PATH = "https://accounts.spotify.com";
+  static final String DEFAULT_API_SERVER_PATH = "https://api.spotify.com";
+  static final int DEFAULT_NUMBER_OF_ENTRIES_ON_PAGE = 5;
+  static final String ARG_NAME_AUTHORIZATION_SERVER = "-access";
+  static final String ARG_NAME_API_SEVER = "-resource";
+  static final String ARG_NAME_PAGE = "-page";
+  static final String ARG_CLIENT_ID = "-client_id";
+  static final String ARG_CLIENT_SECRET = "-client_secret";
+  static final String MSG_FOR_SAME_ID = "Client IDs not parsed";
+  static final String MSG_FOR_MISSING = "Missing key or argument";
+  static final String MSG_FOR_REPEAT = "Arguments repeat";
+  private static final String DEFAULT_CLIENT_ID = "---";
+  private final Map<String, String> ARGS;
+  private SpotifyDashboardIDs spotifyDashboardIDs;
   private ServerDetails serverDetails;
-  private final SpotifyDashboardIDs spotifyDashboardIDs;
 
-  public Args(String... args) {
-    String clientId = findArgument(ARG_CLIENT_ID, args);
-    String clientSecret = findArgument(ARG_CLIENT_SECRET, args);
-    spotifyDashboardIDs = SpotifyDashboardIDs.of(clientId, clientSecret);
-    if (isNoArgsServer(args)) {
-      serverDetails =
-          ServerDetails.of(
-              DEFAULT_AUTHORIZATION_SERVER_PATH,
-              DEFAULT_API_SERVER_PATH,
-              DEFAULT_NUMBER_OF_ENTRIES_ON_PAGE);
-      return;
-    }
-    if (isPassedOnlyServerDetails(args)) {
-      String authorizationServer = findArgument(ARG_NAME_AUTHORIZATION_SERVER, args);
-      String apiServer = findArgument(ARG_NAME_API_SEVER, args);
-      serverDetails =
-          ServerDetails.of(authorizationServer, apiServer, DEFAULT_NUMBER_OF_ENTRIES_ON_PAGE);
-    }
-    if (isPassedOnlyNumberOfEntriesOnPage(args)) {
-      String numberInPage = findArgument(ARG_NAME_PAGE, args);
-      int numberInPageParsed = parse(numberInPage);
-      serverDetails =
-          ServerDetails.of(
-              DEFAULT_AUTHORIZATION_SERVER_PATH, DEFAULT_API_SERVER_PATH, numberInPageParsed);
-    }
-    convertArgs(args);
+  {
+    ARGS = new HashMap<>();
+    ARGS.put(ARG_NAME_AUTHORIZATION_SERVER, DEFAULT_AUTHORIZATION_SERVER_PATH);
+    ARGS.put(ARG_NAME_API_SEVER, DEFAULT_API_SERVER_PATH);
+    ARGS.put(ARG_NAME_PAGE, String.valueOf(DEFAULT_NUMBER_OF_ENTRIES_ON_PAGE));
+    ARGS.put(ARG_CLIENT_ID, DEFAULT_CLIENT_ID);
+    ARGS.put(ARG_CLIENT_SECRET, DEFAULT_CLIENT_ID);
   }
 
-  private boolean isNoArgsServer(String[] args) {
-    return args.length == 4;
-  }
-
-  private boolean isPassedOnlyServerDetails(String[] args) {
-    if (args.length == 4) return true;
-    int serverArg = countAppearances(args, ARG_NAME_AUTHORIZATION_SERVER);
-    int apiArg = countAppearances(args, ARG_NAME_API_SEVER);
-    return isParameterAppearancesOnce(serverArg, apiArg);
-  }
-
-  private boolean isParameterAppearancesOnce(int... args) {
-    return Arrays.stream(args).allMatch(value -> value == 1);
-  }
-
-  private int countAppearances(String[] args, String argument) {
-    return (int) Arrays.stream(args).filter(s -> s.equalsIgnoreCase(argument)).count();
-  }
-
-  private String findArgument(String argument, String[] args) {
-    for (int i = 0; i < args.length - 1; i++) {
-      if (args[i].equalsIgnoreCase(argument)) {
-        return args[i + 1];
-      }
-    }
-    throw new IllegalArgumentException(
-        "Not found arg: " + argument + System.lineSeparator() + "Args passed:" + args.toString());
-  }
-
-  private boolean isPassedOnlyNumberOfEntriesOnPage(String[] args) {
-    if (args.length == 2) return true;
-    int arg = countAppearances(args, ARG_NAME_PAGE);
-    return isParameterAppearancesOnce(arg);
-  }
-
-  private int parse(String numberInPage) {
-    try {
-      return Integer.parseInt(numberInPage);
-    } catch (NumberFormatException ex) {
-      throw new IllegalArgumentException("Can't parse: " + numberInPage);
-    }
-  }
-
-  private void convertArgs(String[] args) {
+  public Args(String... args) throws IllegalArgumentException {
     validateArgs(args);
-    String authorizationServer = findArgument(ARG_NAME_AUTHORIZATION_SERVER, args);
-    String apiServer = findArgument(ARG_NAME_API_SEVER, args);
-    String numberInPage = findArgument(ARG_NAME_PAGE, args);
-    int numberInPageParsed = parse(numberInPage);
-    serverDetails = ServerDetails.of(authorizationServer, apiServer, numberInPageParsed);
+    ARGS.forEach(
+        (key, defaults) -> {
+          ARGS.put(key, findArgument(key, defaults, args));
+        });
+    spotifyDashboardIDs =
+        SpotifyDashboardIDs.of(ARGS.get(ARG_CLIENT_ID), ARGS.get(ARG_CLIENT_SECRET));
+    serverDetails =
+        ServerDetails.builder()
+            .serverAccessPath(ARGS.get(ARG_NAME_AUTHORIZATION_SERVER))
+            .serverApiPath(ARGS.get(ARG_NAME_API_SEVER))
+            .numberOfEntriesInPage(Integer.parseInt(ARGS.get(ARG_NAME_PAGE)))
+            .build();
   }
 
   private void validateArgs(String[] args) {
-    int firstArg = countAppearances(args, ARG_NAME_AUTHORIZATION_SERVER);
-    int secondArg = countAppearances(args, ARG_NAME_API_SEVER);
-    int thirdArg = countAppearances(args, ARG_NAME_PAGE);
-    if (!isParameterAppearancesOnce(firstArg, secondArg, thirdArg)) {
-      throw new IllegalArgumentException("Program arguments incorrect. Args:" + args.toString());
+    if (isOdd(args)) {
+      throw new IllegalArgumentException(MSG_FOR_MISSING);
+    }
+    int lengthDistinctElements = getLengthDistinctElements(args);
+    if (lengthDistinctElements != args.length) {
+      throw new IllegalArgumentException(MSG_FOR_REPEAT);
+    }
+  }
+
+  private boolean isOdd(String[] args) {
+    return args.length % 2 == 1;
+  }
+
+  private int getLengthDistinctElements(String[] args) {
+    return Arrays.stream(args).distinct().toArray().length;
+  }
+
+  private String findArgument(String argument, String defaultt, String[] args) {
+    for (int i = 0; i < args.length - 1; i++) {
+      if (args[i].equalsIgnoreCase(argument) && i + 1 < args.length) {
+        return args[i + 1];
+      }
+    }
+    return defaultt;
+  }
+
+  public SpotifyDashboardIDs getSpotifyDashboardIDs() throws IllegalStateException {
+    validateSpotify();
+    return spotifyDashboardIDs;
+  }
+
+  private void validateSpotify() {
+    String clientId = spotifyDashboardIDs.getClientID();
+    String clientSecret = spotifyDashboardIDs.getClientSecret();
+    if (clientId.equals(DEFAULT_CLIENT_ID) || clientSecret.equals(DEFAULT_CLIENT_ID)) {
+      throw new IllegalStateException(MSG_FOR_SAME_ID);
     }
   }
 
   public ServerDetails getServerDetails() {
     return serverDetails;
-  }
-
-  public SpotifyDashboardIDs getSpotifyDashboardIDs() {
-    return spotifyDashboardIDs;
   }
 }
