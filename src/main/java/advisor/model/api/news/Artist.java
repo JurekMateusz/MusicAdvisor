@@ -1,11 +1,10 @@
 package advisor.model.api.news;
 
+import lombok.Getter;
+
+@Getter
 public class Artist {
   private String name;
-
-  public String getName() {
-    return name;
-  }
 
   @Override
   public String toString() {

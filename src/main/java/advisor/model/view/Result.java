@@ -1,11 +1,13 @@
 package advisor.model.view;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Result {
   private final String output;
-
-  private Result(String output) {
-    this.output = output;
-  }
 
   public static Result of(String output) {
     return new Result(output);
@@ -13,9 +15,5 @@ public class Result {
 
   public static Result empty() {
     return new Result("");
-  }
-
-  public String getOutput() {
-    return output;
   }
 }

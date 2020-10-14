@@ -2,9 +2,11 @@ package advisor.model.api.news;
 
 import advisor.model.api.ExternalUrls;
 import com.google.gson.annotations.SerializedName;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public class Song {
   private List<Artist> artists;
 
@@ -12,16 +14,4 @@ public class Song {
   private ExternalUrls externalUrls;
 
   private String name;
-
-  public List<Artist> getArtists() {
-    return artists;
-  }
-
-  public ExternalUrls getExternalUrls() {
-    return externalUrls;
-  }
-
-  public String getName() {
-    return name;
-  }
 }
