@@ -2,7 +2,7 @@ package advisor.music.lifecycle.main.task.tasks;
 
 import advisor.exception.ContentNotFoundException;
 import advisor.model.view.Result;
-import advisor.music.lifecycle.UserInput;
+import advisor.music.lifecycle.input.UserInput;
 import advisor.music.lifecycle.main.task.InputTaskAbstract;
 
 import java.io.IOException;

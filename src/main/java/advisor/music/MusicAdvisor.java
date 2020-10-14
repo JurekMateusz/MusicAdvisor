@@ -10,14 +10,24 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class MusicAdvisor {
-  private String userSpotifyCode = "";
   private final RequestService service = RequestService.getInstance();
+  private String userSpotifyCode = "";
 
   public void start() {
+    authorizeUser();
+
+    AccessToken accessToken = getAccessTokenFromCode();
+
+    mainStageProgram(accessToken);
+  }
+
+  private void authorizeUser() {
     AuthenticateUserLifecycle task = new AuthenticateUserLifecycle();
     task.execute();
     this.userSpotifyCode = task.getCode();
+  }
 
+  private AccessToken getAccessTokenFromCode() {
     System.out.println("making http request for access_token...");
     AccessToken accessToken;
     try {
@@ -31,6 +41,10 @@ public class MusicAdvisor {
       throw new IllegalStateException("Fail to get access token form code.");
     }
     System.out.println("Success!");
+    return accessToken;
+  }
+
+  private void mainStageProgram(AccessToken accessToken) {
     new MainAppLifecycle(accessToken).execute();
   }
 

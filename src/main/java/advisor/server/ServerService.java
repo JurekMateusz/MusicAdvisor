@@ -50,8 +50,8 @@ public class ServerService {
   }
 
   private class Server {
-    static final String SUCCESS_MESSAGE = "Got the code. Return back to your program.";
-    static final String FAIL_MESSAGE = "Authorization code not found. Try again.";
+    static final String SUCCESS_MESSAGE = "<h1>Got the code. Return back to your program.</h1>";
+    static final String FAIL_MESSAGE = "<h1>Authorization code not found. Try again.</h1>";
     HttpServer server;
     String code;
 

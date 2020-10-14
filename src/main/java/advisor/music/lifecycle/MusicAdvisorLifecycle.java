@@ -1,8 +1,11 @@
 package advisor.music.lifecycle;
 
+import advisor.music.lifecycle.input.Task;
+import advisor.music.lifecycle.input.UserInput;
+
 import java.util.Scanner;
 
-import static advisor.music.lifecycle.Task.UNKNOWN;
+import static advisor.music.lifecycle.input.Task.UNKNOWN;
 
 public interface MusicAdvisorLifecycle {
   Scanner scanner = new Scanner(System.in);

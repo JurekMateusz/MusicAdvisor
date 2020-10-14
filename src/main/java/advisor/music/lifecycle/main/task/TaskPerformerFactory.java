@@ -1,6 +1,6 @@
 package advisor.music.lifecycle.main.task;
 
-import advisor.music.lifecycle.Task;
+import advisor.music.lifecycle.input.Task;
 import advisor.music.lifecycle.main.task.tasks.*;
 
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package advisor;
 
 import advisor.args.Args;
-import advisor.args.FirstAccessTokenDetails;
+import advisor.args.AccessTokenDetails;
 import advisor.args.ServerDetails;
 import advisor.args.SpotifyDashboardIDs;
 import advisor.http.client.Request;
@@ -13,7 +13,7 @@ public class Main {
     ServerDetails details = arg.getServerDetails();
     feedRequestSingletonServerParameter(details);
     SpotifyDashboardIDs spotifyDashboardIDs = arg.getSpotifyDashboardIDs();
-    FirstAccessTokenDetails.init(spotifyDashboardIDs, details);
+    AccessTokenDetails.init(spotifyDashboardIDs, details);
     new MusicAdvisor().start();
   }
 

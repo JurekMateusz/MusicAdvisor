@@ -4,7 +4,7 @@ apply plugin: 'application'
 group 'advisor'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 11
+sourceCompatibility = 14
 mainClassName = 'advisor.Main'
 
 repositories {

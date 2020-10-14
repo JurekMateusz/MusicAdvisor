@@ -7,8 +7,8 @@ import advisor.model.api.categories.Category;
 import advisor.model.api.news.Albums;
 import advisor.model.api.playlist.Playlist;
 import advisor.model.view.Result;
-import advisor.music.lifecycle.Task;
-import advisor.music.lifecycle.UserInput;
+import advisor.music.lifecycle.input.Task;
+import advisor.music.lifecycle.input.UserInput;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -24,23 +24,21 @@ public abstract class InputTaskAbstract {
 
   protected static Result takePageFromUrl(String accessToken, String url)
       throws IOException, InterruptedException {
-    switch (previousTask) {
+    return switch (previousTask) {
       case NEW:
         Albums newsByUrl = service.getNewsByUrl(accessToken, url);
         updateOffsetInfo(newsByUrl);
-        return createResultOf(newsByUrl);
-      case FEATURED:
-      case PLAYLISTS:
+         yield createResultOf(newsByUrl);
+      case FEATURED ,PLAYLISTS:
         Playlist playlistsByUrl = service.getPlaylistsByUrl(accessToken, url);
         updateOffsetInfo(playlistsByUrl);
-        return createResultOf(playlistsByUrl);
-      case CATEGORIES:
+        yield createResultOf(playlistsByUrl);
+    case CATEGORIES:
         Categories topCategoriesByUrl = service.getTopCategoriesByUrl(accessToken, url);
         updateOffsetInfo(topCategoriesByUrl);
-        return createResultOf(topCategoriesByUrl);
-      default:
-        return Result.of("Default in NextTask/previous");
-    }
+        yield createResultOf(topCategoriesByUrl);
+      default : yield Result.of("Default in NextTask/previous");
+  };
   }
 
   protected static void updateOffsetInfo(Albums albums) {

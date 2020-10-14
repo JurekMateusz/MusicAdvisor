@@ -38,7 +38,7 @@ public class Request {
     return INSTANCE;
   }
 
-  public String getFirstAccessToken(String contentToGetFirstAccessToken)
+  public String getAccessToken(String contentToGetFirstAccessToken)
       throws IOException, InterruptedException, InvalidSpotifyCodeException {
     HttpRequest request =
         HttpRequest.newBuilder()
@@ -146,13 +146,9 @@ public class Request {
   public void init(ServerDetails details) {
     SPOTIFY_TOKEN_URI = details.getServerAccessPath() + "/api/token";
     API = details.getServerApiPath() + "/v1/browse";
-
-    //        this.NEWS_URL = API + "/new-releases?limit=";
-    //        this.FEATURED_PLAYLIST_URL = API + "/featured-playlists?limit=";
-    //        this.CATEGORIES_URL = API + "/categories";
     String limit = "limit=" + details.getNumberOfEntriesInPage();
     NEWS_URL = API + "/new-releases?" + limit;
     FEATURED_PLAYLIST_URL = API + "/featured-playlists?" + limit;
-    CATEGORIES_URL = API + "/categories";
+    CATEGORIES_URL = API + "/categories?"+limit;
   }
 }

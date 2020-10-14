@@ -1,7 +1,7 @@
 package advisor.music.lifecycle.main.task.tasks;
 
 import advisor.model.view.Result;
-import advisor.music.lifecycle.UserInput;
+import advisor.music.lifecycle.input.UserInput;
 import advisor.music.lifecycle.main.task.InputTaskAbstract;
 
 public class UnknownTask extends InputTaskAbstract {

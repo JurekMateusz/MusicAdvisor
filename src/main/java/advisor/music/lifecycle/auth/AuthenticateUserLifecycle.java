@@ -1,13 +1,13 @@
 package advisor.music.lifecycle.auth;
 
-import advisor.args.FirstAccessTokenDetails;
+import advisor.args.AccessTokenDetails;
 import advisor.music.lifecycle.MusicAdvisorLifecycle;
-import advisor.music.lifecycle.Task;
-import advisor.music.lifecycle.UserInput;
+import advisor.music.lifecycle.input.Task;
+import advisor.music.lifecycle.input.UserInput;
 import advisor.server.ServerService;
 
-import static advisor.music.lifecycle.Task.AUTH;
-import static advisor.music.lifecycle.Task.EXIT;
+import static advisor.music.lifecycle.input.Task.AUTH;
+import static advisor.music.lifecycle.input.Task.EXIT;
 
 public class AuthenticateUserLifecycle implements MusicAdvisorLifecycle {
   private String code = "";
@@ -29,7 +29,7 @@ public class AuthenticateUserLifecycle implements MusicAdvisorLifecycle {
         System.out.println("Please, provide access for application.");
         continue;
       }
-      System.out.println(FirstAccessTokenDetails.getAuthorizeUserLink());
+      System.out.println(AccessTokenDetails.getAuthorizeUserLink());
       System.out.println("waiting for code...");
       code = new ServerService().getUserSpotifyCode();
       System.out.println("code received");

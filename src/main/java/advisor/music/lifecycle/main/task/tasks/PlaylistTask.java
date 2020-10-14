@@ -4,8 +4,8 @@ import advisor.model.api.categories.Categories;
 import advisor.model.api.categories.Category;
 import advisor.model.api.playlist.Playlist;
 import advisor.model.view.Result;
-import advisor.music.lifecycle.Task;
-import advisor.music.lifecycle.UserInput;
+import advisor.music.lifecycle.input.Task;
+import advisor.music.lifecycle.input.UserInput;
 import advisor.music.lifecycle.main.task.InputTaskAbstract;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class PlaylistTask extends InputTaskAbstract {
   }
 
   private void updateCategories(String accessToken) throws IOException, InterruptedException {
-    Categories topCategories = service.getTopCategories(accessToken, 100);
+    Categories topCategories = service.getTopCategories(accessToken, 50);
     categories = topCategories.getCategories();
   }
 

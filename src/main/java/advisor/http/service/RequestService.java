@@ -1,6 +1,6 @@
 package advisor.http.service;
 
-import advisor.args.FirstAccessTokenDetails;
+import advisor.args.AccessTokenDetails;
 import advisor.exception.InvalidAccessTokenException;
 import advisor.exception.InvalidSpotifyCodeException;
 import advisor.http.client.Request;
@@ -29,9 +29,16 @@ public class RequestService {
 
   public AccessToken getFirstAccessToken(String spotifyCode)
       throws IOException, InterruptedException, InvalidSpotifyCodeException {
-    String contentToGetFirstAccessToken = FirstAccessTokenDetails.makeContent(spotifyCode);
-    String json = request.getFirstAccessToken(contentToGetFirstAccessToken);
+    String contentToGetFirstAccessToken = AccessTokenDetails.makeContentForFirstToken(spotifyCode);
+    String json = request.getAccessToken(contentToGetFirstAccessToken);
     return mapper.fromJson(json, AccessToken.class);
+  }
+  public AccessToken getNewAccessToken(String refreshToken) throws IOException, InterruptedException {
+    String contentToGetFirstAccessToken = AccessTokenDetails.makeContentForNewToken(refreshToken);
+    String json = request.getAccessToken(contentToGetFirstAccessToken);
+    AccessToken accessToken = mapper.fromJson(json, AccessToken.class);
+    accessToken.setRefreshToken(refreshToken);
+    return accessToken;
   }
 
   public Albums getNews(String accessToken) throws IOException, InterruptedException {
@@ -109,4 +116,5 @@ public class RequestService {
     }
     return true;
   }
+
 }

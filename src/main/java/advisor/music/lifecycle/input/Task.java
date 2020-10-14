@@ -1,4 +1,4 @@
-package advisor.music.lifecycle;
+package advisor.music.lifecycle.input;
 
 public enum Task {
   NEW("new"),

@@ -5,20 +5,24 @@ import advisor.exception.InvalidAccessTokenException;
 import advisor.model.token.AccessToken;
 import advisor.model.view.Result;
 import advisor.music.lifecycle.MusicAdvisorLifecycle;
-import advisor.music.lifecycle.Task;
-import advisor.music.lifecycle.UserInput;
+import advisor.music.lifecycle.input.Task;
+import advisor.music.lifecycle.input.UserInput;
 import advisor.music.lifecycle.main.task.InputTaskAbstract;
 import advisor.music.lifecycle.main.task.TaskPerformerFactory;
+import advisor.music.lifecycle.main.tokenguardian.AccessTokenGuardian;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainAppLifecycle implements MusicAdvisorLifecycle {
-  private final AccessToken accessToken;
+  private AccessToken accessToken;
   private boolean isRunning = true;
 
   public MainAppLifecycle(AccessToken accessToken) {
     this.accessToken = accessToken;
-    // todo thread guarding setting new accessToken after expires old one;
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    executor.submit(new AccessTokenGuardian(this));
   }
 
   @Override
@@ -48,5 +52,13 @@ public class MainAppLifecycle implements MusicAdvisorLifecycle {
 
   private void turnOffApp() {
     this.isRunning = false;
+  }
+
+  public AccessToken getAccessToken() {
+    return accessToken;
+  }
+
+  public void setAccessToken(AccessToken accessToken) {
+    this.accessToken = accessToken;
   }
 }

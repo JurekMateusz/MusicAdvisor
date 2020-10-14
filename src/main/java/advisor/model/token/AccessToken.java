@@ -2,6 +2,7 @@ package advisor.model.token;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class AccessToken {
@@ -14,6 +15,7 @@ public class AccessToken {
   @SerializedName("expires_in")
   private long expiresIn;
 
+  @Setter
   @SerializedName("refresh_token")
   private String refreshToken;
 
