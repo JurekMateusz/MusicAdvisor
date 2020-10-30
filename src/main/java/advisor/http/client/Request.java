@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import io.vavr.control.Try;
 
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -24,19 +23,26 @@ public class Request {
     this.client = httpClient;
   }
 
-  public String getAccessToken(String contentToGetFirstAccessToken, String url)
-      throws IOException, InterruptedException, InvalidSpotifyCodeException {
+  public Try<HttpResponse<String>> getAccessToken(String contentToGetFirstAccessToken, String url) {
     HttpRequest request =
         HttpRequest.newBuilder()
             .setHeader("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
             .uri(URI.create(url))
             .POST(HttpRequest.BodyPublishers.ofString(contentToGetFirstAccessToken))
             .build();
-    HttpResponse<String> result = client.send(request, HttpResponse.BodyHandlers.ofString());
-    if (result.statusCode() != HTTP_OK) {
+    return Try.of(
+        () -> {
+          HttpResponse<String> resp = client.send(request, HttpResponse.BodyHandlers.ofString());
+          validateContentWithAccessToken(resp);
+          return resp;
+        });
+  }
+
+  private void validateContentWithAccessToken(HttpResponse<String> resp)
+      throws InvalidSpotifyCodeException {
+    if (resp.statusCode() != HTTP_OK) {
       throw new InvalidSpotifyCodeException();
     }
-    return result.body();
   }
 
   public Try<HttpResponse<String>> makeHttpGetRequest(String accessToken, String toUrl) {
