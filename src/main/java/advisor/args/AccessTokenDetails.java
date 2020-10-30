@@ -9,6 +9,7 @@ public class AccessTokenDetails {
   private static final String GRANT_TYPE_REFRESH_TOKEN = "grant_type=refresh_token";
   private static final String redirectUri = "redirect_uri=http://localhost:8080";
   private static final String AMP = "&";
+  private static final String scopes = "user-read-recently-played";
   private static String authorizeUserLink;
   private static String clientID;
   private static String clientSecret;
@@ -23,6 +24,9 @@ public class AccessTokenDetails {
         serverDetails.getServerAccessPath()
             + "/authorize?"
             + clientID
+            + AMP
+            + "scope="
+            + scopes
             + AMP
             + redirectUri
             + "&response_type=code";

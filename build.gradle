@@ -12,13 +12,16 @@ repositories {
 }
 
 dependencies {
-    compile 'org.junit.jupiter:junit-jupiter:5.6.2'
     dependencies {
         compile 'com.google.code.gson:gson:+'
         compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
         compile group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
         compile 'com.google.code.gson:gson:+'
+        compile group: 'io.vavr', name: 'vavr', version: '0.10.3'
         compile group: 'org.springframework', name: 'spring-core', version: '2.5.6'
+        testCompile group: 'org.mockito', name: 'mockito-core', version: '3.6.0'
+        testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.7.0'
+        testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.6.0'
     }
 }
 jar {
