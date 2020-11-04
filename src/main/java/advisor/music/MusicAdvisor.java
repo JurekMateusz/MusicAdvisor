@@ -1,63 +1,28 @@
 package advisor.music;
 
-import advisor.exception.InvalidAccessTokenException;
 import advisor.http.service.RequestService;
 import advisor.model.token.AccessToken;
-import advisor.music.lifecycle.auth.AuthenticateUserLifecycle;
-import advisor.music.lifecycle.main.MainAppLifecycle;
-
-import java.io.IOException;
-import java.util.Objects;
+import advisor.music.input.InputProvider;
+import advisor.view.Console;
 
 public class MusicAdvisor {
-  private final RequestService service = RequestService.getInstance();
-  private String userSpotifyCode = "";
+  private final RequestService service;
+  private final InputProvider inputProvider;
+  private AccessToken accessToken;
+
+  public MusicAdvisor(RequestService service, InputProvider inputProvider) {
+    this.service = service;
+    this.inputProvider = inputProvider;
+  }
 
   public void start() {
-    authorizeUser();
-
-    AccessToken accessToken = getAccessTokenFromCode();
-
-    mainStageProgram(accessToken);
-  }
-
-  private void authorizeUser() {
-    AuthenticateUserLifecycle task = new AuthenticateUserLifecycle();
-    task.execute();
-    this.userSpotifyCode = task.getCode();
-  }
-
-  private AccessToken getAccessTokenFromCode() {
-    System.out.println("making http request for access_token...");
-    AccessToken accessToken;
-    try {
-      accessToken = service.getFirstAccessToken(userSpotifyCode);
-    } catch (IOException | InterruptedException ex) {
-      throw new IllegalStateException("Connection error: " + ex.getMessage());
-    } catch (InvalidAccessTokenException ex) {
-      throw new IllegalArgumentException(ex.getMessage());
+    AdvisorAuthorizeUser authorizer = new AdvisorAuthorizeUser(service, inputProvider);
+    if (!authorizer.authorizeUser()) {
+      Console.log("Can't authorize user");
+      System.exit(-1);
     }
-    if (!isAccessTokenCorrect(accessToken)) {
-      throw new IllegalStateException("Fail to get access token form code.");
-    }
-    System.out.println("Success!");
-    return accessToken;
-  }
-
-  private void mainStageProgram(AccessToken accessToken) {
-    new MainAppLifecycle(accessToken).execute();
-  }
-
-  private boolean isAccessTokenCorrect(AccessToken accessToken) {
-    return Objects.nonNull(accessToken)
-        && hasData(accessToken)
-        && service.isAccessTokenWork(accessToken);
-  }
-
-  private boolean hasData(AccessToken aT) {
-    return !(aT.getAccessToken().isEmpty()
-        || aT.getRefreshToken().isEmpty()
-        || aT.getTokenType().isEmpty()
-        || aT.getExpiresIn() == 0);
+    accessToken = authorizer.getAccessToken();
+    authorizer = null;
+    new AdvisorMainStage(service, inputProvider, accessToken).start();
   }
 }

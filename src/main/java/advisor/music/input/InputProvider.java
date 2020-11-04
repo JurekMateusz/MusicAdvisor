@@ -1,31 +1,28 @@
-package advisor.music.lifecycle;
-
-import advisor.music.lifecycle.input.Task;
-import advisor.music.lifecycle.input.UserInput;
+package advisor.music.input;
 
 import java.util.Scanner;
 
-import static advisor.music.lifecycle.input.Task.UNKNOWN;
+import static advisor.music.input.Task.UNKNOWN;
 
-public interface MusicAdvisorLifecycle {
-  Scanner scanner = new Scanner(System.in);
+public class InputProvider {
+  private final Scanner scanner = new Scanner(System.in);
 
-  default UserInput getUserInput() {
+  public Input getUserInput() {
     String rawInput = scanner.nextLine();
-    String input = rawInput.trim().toUpperCase();
+    String input = rawInput.trim();
     String[] split = input.split(" +");
     if (split.length == 0) {
-      return UserInput.of(UNKNOWN, "unknown");
+      return Input.of(UNKNOWN, "unknown");
     }
     Task task = parseTaskInput(split[0]);
     String category = getCategory(split);
 
-    return UserInput.of(task, category);
+    return Input.of(task, category);
   }
 
   private Task parseTaskInput(String input) {
     try {
-      return Task.valueOf(input);
+      return Task.valueOf(input.toUpperCase());
     } catch (IllegalArgumentException ex) {
       return UNKNOWN.set(input);
     }
@@ -43,6 +40,4 @@ public interface MusicAdvisorLifecycle {
     }
     return result;
   }
-
-  void execute();
 }

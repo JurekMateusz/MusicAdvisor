@@ -7,7 +7,7 @@ import java.util.Map;
 public class Args {
   static final String DEFAULT_AUTHORIZATION_SERVER_PATH = "https://accounts.spotify.com";
   static final String DEFAULT_API_SERVER_PATH = "https://api.spotify.com";
-  static final int DEFAULT_NUMBER_OF_ENTRIES_ON_PAGE = 5;
+  static final int DEFAULT_NUMBER_OF_ENTRIES_ON_PAGE = 8;
   static final String ARG_NAME_AUTHORIZATION_SERVER = "-access";
   static final String ARG_NAME_API_SEVER = "-resource";
   static final String ARG_NAME_PAGE = "-page";
@@ -18,8 +18,8 @@ public class Args {
   static final String MSG_FOR_REPEAT = "Arguments repeat";
   private static final String DEFAULT_CLIENT_ID = "---";
   private final Map<String, String> ARGS;
-  private SpotifyDashboardIDs spotifyDashboardIDs;
-  private ServerDetails serverDetails;
+  private final SpotifyDashboardIDs spotifyDashboardIDs;
+  private final ServerDetails serverDetails;
 
   {
     ARGS = new HashMap<>();

@@ -17,9 +17,8 @@ public class RequestService {
   private final Mapper mapper = new Mapper();
   private String accessToken;
 
-  public RequestService(Request request, String accessToken) {
+  public RequestService(Request request) {
     this.request = request;
-    this.accessToken = accessToken;
   }
 
   public void setAccessToken(String accessToken) {
@@ -76,6 +75,11 @@ public class RequestService {
     return mapper.mapToPlaylist(response);
   }
 
+  public Try<Categories> getAllCategories() {
+    Try<HttpResponse<String>> response = getHttpResponse(FULL_CATEGORIES_URL);
+    return mapper.mapToCategories(response);
+  }
+
   public Try<Categories> getTopCategories() {
     Try<HttpResponse<String>> response = getHttpResponse(CATEGORIES_URL);
     return mapper.mapToCategories(response);
@@ -87,6 +91,7 @@ public class RequestService {
   }
 
   public boolean isAccessTokenWork(AccessToken accessToken) {
+    this.accessToken = accessToken.getAccessToken();
     Try<Albums> news = getNews();
     return news.isSuccess();
   }

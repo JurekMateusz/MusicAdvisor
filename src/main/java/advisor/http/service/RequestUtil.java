@@ -8,6 +8,8 @@ public class RequestUtil {
   public static String NEWS_URL = API + "/new-releases?limit=";
   public static String FEATURED_PLAYLIST_URL = API + "/featured-playlists?limit=";
   public static String CATEGORIES_URL = API + "/categories";
+  public static String FULL_CATEGORIES_URL = API + "/categories?limit=50";
+  public static int limit;
 
   public static void init(ServerDetails details) {
     SPOTIFY_TOKEN_URI = details.getServerAccessPath() + "/api/token";
@@ -16,9 +18,10 @@ public class RequestUtil {
     NEWS_URL = API + "/new-releases?" + limit;
     FEATURED_PLAYLIST_URL = API + "/featured-playlists?" + limit;
     CATEGORIES_URL = API + "/categories?" + limit;
+    RequestUtil.limit = details.getNumberOfEntriesInPage();
   }
 
   static String getCategoriesUrlByID(String categoryId) {
-    return CATEGORIES_URL + "/" + categoryId + "/playlists";
+    return API + "/categories" + "/" + categoryId + "/playlists?limit=" + limit;
   }
 }
