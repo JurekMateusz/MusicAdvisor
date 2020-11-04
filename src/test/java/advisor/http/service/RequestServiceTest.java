@@ -20,6 +20,7 @@ import static io.vavr.control.Try.success;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +30,8 @@ class RequestServiceTest {
 
   @BeforeEach
   void setUp() {
-    service = new RequestService(request, "access token");
+    service = new RequestService(request);
+    service.setAccessToken("test access token");
   }
 
   @Test
