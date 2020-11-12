@@ -23,15 +23,13 @@ import advisor.music.input.InputProvider;
 import io.vavr.control.Try;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class AdvisorMainStage {
     private final CommandHistory history = new CommandHistory();
     private final InputProvider inputProvider;
     private final RequestService service;
-    private AccessToken accessToken;
     private final Command info = new InfoCommand();
+    private AccessToken accessToken;
 
     AdvisorMainStage(RequestService service, InputProvider inputProvider, AccessToken accessToken) {
         assert Objects.nonNull(accessToken);
@@ -40,8 +38,7 @@ public class AdvisorMainStage {
         this.inputProvider = inputProvider;
         this.accessToken = accessToken;
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(new AccessTokenGuardian(this,service,accessToken));
+        new AccessTokenGuardian(this,service,accessToken);
     }
 
     public void start() {

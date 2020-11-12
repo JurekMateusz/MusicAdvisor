@@ -4,26 +4,34 @@ import advisor.http.service.RequestService;
 import advisor.model.token.AccessToken;
 import advisor.music.AdvisorMainStage;
 import io.vavr.control.Try;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
-public class AccessTokenGuardian implements Runnable {
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+public class AccessTokenGuardian {
   private final AdvisorMainStage app;
   private final RequestService service;
   private AccessToken accessToken;
 
-  @Override
-  public void run() {
-    while (true) {
-      long sleepTime = countSleepTime();
-      sleep(sleepTime);
-      AccessToken newToken = getNewAccessToken();
-      app.updateAccessToken(newToken);
-      this.accessToken = newToken;
-    }
+  public AccessTokenGuardian(
+      AdvisorMainStage app, RequestService service, AccessToken accessToken) {
+    this.app = app;
+    this.service = service;
+    this.accessToken = accessToken;
+    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    executor.scheduleAtFixedRate(
+        () -> {
+          AccessToken newToken = getNewAccessToken();
+          app.updateAccessToken(newToken);
+          this.accessToken = newToken;
+        },
+        1,
+        countSleepTime(),
+        TimeUnit.SECONDS);
   }
 
-  private AccessToken getNewAccessToken() {
+  public AccessToken getNewAccessToken() {
     Try<AccessToken> newAccessToken = service.getNewAccessToken(accessToken.getRefreshToken());
     if (newAccessToken.isSuccess()) {
       return newAccessToken.get();
